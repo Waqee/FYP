@@ -1,10 +1,13 @@
 fileFormatVersion: 2
 guid: 28547ae76cc3f2c49bea57f3f80c3770
-timeCreated: 1455483646
+timeCreated: 1455528893
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - Cube: {fileID: 166266, guid: 747a9d829a05fb041830896ba1f601e3, type: 2}
+  - Sphere: {fileID: 166266, guid: 9eb3714ec260ab14a81f2e7ad8ba3432, type: 2}
+  - Cylinder: {fileID: 166266, guid: 650484244f16bfd4fbe2fd9a34fc1b1e, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

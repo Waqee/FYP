@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Grabber : MonoBehaviour {
 
-	public GameObject current;
-	public bool grabbed = false;
+	public static GameObject current;
+	public static bool grabbed = false;
 	public Vector3 offset;
 	public float rotation;
 	// Use this for initialization
@@ -23,7 +23,7 @@ public class Grabber : MonoBehaviour {
 			float min = Mathf.Infinity;
 			foreach (var collider in colliders) {
 				var go = collider.gameObject; 
-				if (go.name != "Floor" && Vector3.Distance (transform.position, go.transform.position) < min)
+				if (go.name != "Floor" && go.name != "CutPlane" && go.name != "Wall" && Vector3.Distance (transform.position, go.transform.position) < min)
 					current = go;
 			}
 			if (current != null)
@@ -36,9 +36,14 @@ public class Grabber : MonoBehaviour {
 		}
 
 		if (grabbed) {
-			current.transform.position = offset + transform.position;
-			if(SixenseInput.Controllers [1].GetButtonUp (SixenseButtons.TRIGGER))
+			if (current == null)
 				grabbed = false;
+			else {
+				current.transform.position = offset + transform.position;
+				if(SixenseInput.Controllers [1].GetButtonUp (SixenseButtons.TRIGGER))
+					grabbed = false;
+			}
+
 		}
 
 

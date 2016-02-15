@@ -19,3 +19,4 @@ D:\Projects\Unity\FYP\Temp\bin\Release\UnityEngine.UI.xml
 D:\Projects\Unity\FYP\Temp\bin\Release\UnityEngine.Networking.xml
 D:\Projects\Unity\FYP\obj\Release\Assembly-CSharp.dll
 D:\Projects\Unity\FYP\obj\Release\Assembly-CSharp.pdb
+D:\Projects\Unity\FYP\obj\Release\Assembly-CSharp.csprojResolveAssemblyReference.cache

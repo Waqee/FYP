@@ -17,7 +17,8 @@ public class MouseMotor : MonoBehaviour
 
     private float _rotationY = 0f;
 
-    private Transform _transform = null;
+    private Transform _transform = null;	
+
     public new Transform transform
     {
         get
