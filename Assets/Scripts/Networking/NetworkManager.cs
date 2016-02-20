@@ -73,8 +73,10 @@ public class NetworkManager : Photon.PunBehaviour
 		else
 			Debug.Log ("Room name and password incorrect.");
 	}
-	public void OnJoinedRoom()
+
+	public override void OnJoinedRoom()
 	{
-		PhotonNetwork.LoadLevel (1);
+		PhotonNetwork.LoadLevel ("Editor");
+		Debug.Log ("Test called!");
 	}
 }

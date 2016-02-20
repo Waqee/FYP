@@ -1,13 +1,20 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Photon Unity Networking\Plugins\PhotonNetwork\LoadbalancingPeer.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\MouseMotor.cs">
     <Files>
-      <File FileName="Assets\Scripts\Networking\NetworkInitializer.cs" Line="10" Column="2" />
-      <File FileName="Assets\Photon Unity Networking\Plugins\PhotonNetwork\LoadbalancingPeer.cs" Line="27" Column="1" />
+      <File FileName="Assets\Scripts\RigidMotor.cs" Line="7" Column="31" />
+      <File FileName="Assets\Scripts\Toolbox.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Grabber.cs" Line="26" Column="72" />
+      <File FileName="Assets\Scripts\Networking\NetworkManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\MouseMotor.cs" Line="10" Column="34" />
+      <File FileName="Assets\SixenseInput\DemoScenes\Scripts\SixenseInputTest.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <RunToCursorBreakpoint file="D:\Projects\Unity\FYP\Assets\Scripts\RigidMotor.cs" line="39" column="10" />
+      <RunToCursorBreakpoint file="D:\Projects\Unity\FYP\Assets\Scripts\RigidMotor.cs" line="40" column="4" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

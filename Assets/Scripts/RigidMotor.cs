@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class RigidMotor : MonoBehaviour
 {
-    public float Speed = 10f;
+    public float Speed = 0.001f;
 
     private Transform _transform = null;
     public new Transform transform
@@ -53,6 +53,14 @@ public class RigidMotor : MonoBehaviour
 
         rigidbody.AddForce(changeVelocity, ForceMode.VelocityChange);
 
-        rigidbody.AddForce(Physics.gravity * rigidbody.mass, ForceMode.Force);
+		if (SixenseInput.Controllers [0].GetButtonDown (SixenseButtons.BUMPER))
+			transform.position += Vector3.up;
+		
+		if (SixenseInput.Controllers [0].GetButtonDown (SixenseButtons.TRIGGER))
+			transform.position -= Vector3.up;
+
+		// Cancel Z rotation.
+		float z = transform.eulerAngles.z;
+		transform.Rotate (0, 0, -z);
     }
 }
