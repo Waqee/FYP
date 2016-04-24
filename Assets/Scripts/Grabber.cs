@@ -4,11 +4,14 @@ using System.Collections;
 public class Grabber : MonoBehaviour {
 
 	public static GameObject current;
+    public GameObject leftpointer;
 	public static bool grabbed = false;
 	public Vector3 offset;
-	public float rotation;
-	// Use this for initialization
-	void Start () {
+    public float scalingdist;
+	Quaternion pointerrotation;
+    Quaternion objectrotation;
+    // Use this for initialization
+    void Start () {
 	
 	}
 	
@@ -40,7 +43,23 @@ public class Grabber : MonoBehaviour {
 				grabbed = false;
 			else {
 				current.transform.position = offset + transform.position;
-				if(SixenseInput.Controllers [1].GetButtonUp (SixenseButtons.TRIGGER))
+
+                if (SixenseInput.Controllers[0].GetButtonDown(SixenseButtons.ONE))
+                    scalingdist = Vector3.Distance(transform.position, leftpointer.transform.position);
+
+                if (SixenseInput.Controllers[0].GetButton(SixenseButtons.ONE))
+                    current.transform.localScale = Vector3.one * (Vector3.Distance(transform.position, leftpointer.transform.position) - scalingdist + 1);
+
+                if (SixenseInput.Controllers[0].GetButtonDown(SixenseButtons.THREE))
+                {
+                    pointerrotation = leftpointer.transform.rotation;
+                    objectrotation = current.transform.rotation;
+                }
+
+                if (SixenseInput.Controllers[0].GetButton(SixenseButtons.THREE))
+                    current.transform.rotation = (leftpointer.transform.rotation * Quaternion.Inverse( pointerrotation)) * objectrotation;
+
+                if (SixenseInput.Controllers [1].GetButtonUp (SixenseButtons.TRIGGER))
 					grabbed = false;
 			}
 

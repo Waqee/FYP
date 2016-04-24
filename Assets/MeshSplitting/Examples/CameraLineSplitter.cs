@@ -24,6 +24,12 @@ public class CameraLineSplitter : MonoBehaviour
     private Vector3 _endPos;
 	public GameObject pointer;
 	public GameObject cylinder;
+    GameObject goCutPlane;
+    public GameObject CutPlane;
+
+    public Vector3 offset;
+    Quaternion pointerrotation;
+    Quaternion objectrotation;
 
     private void Awake()
     {
@@ -49,6 +55,9 @@ public class CameraLineSplitter : MonoBehaviour
             _inCutMode = false;
             _lineRenderer.enabled = false;
             _hasStartPos = false;
+
+            Cut(goCutPlane.transform.position, goCutPlane.transform.up);
+            Destroy(goCutPlane);
             //Cursor.lockState = CursorLockMode.Locked;
             //Cursor.visible = false;
         }
@@ -70,6 +79,13 @@ public class CameraLineSplitter : MonoBehaviour
 
                 _hasStartPos = false;
                 _lineRenderer.enabled = false;
+            }
+
+            if(goCutPlane)
+            {
+                goCutPlane.transform.position = offset + pointer.transform.position;
+
+                goCutPlane.transform.rotation = (pointer.transform.rotation * Quaternion.Inverse(pointerrotation)) * objectrotation;
             }
 
             if (_hasStartPos)
@@ -95,17 +111,28 @@ public class CameraLineSplitter : MonoBehaviour
         Vector3 fwd = (center - cylinder.transform.position).normalized;
         Vector3 normal = Vector3.Cross(fwd, cut).normalized;
 
-#if UNITY_EDITOR
-        if (ShowDebug)
-        {
-            GLDebug.DrawLine(center, center + normal, Color.red, 2f, false);
-            GLDebug.DrawLine(center + fwd * CutPlaneSize / 2f + cut * CutPlaneSize / 2f, center + fwd * CutPlaneSize / 2f + cut * CutPlaneSize / -2f, Color.green, 2f);
-            GLDebug.DrawLine(center + fwd * CutPlaneSize / 2f + cut * CutPlaneSize / -2f, center + fwd * CutPlaneSize / -2f + cut * CutPlaneSize / -2f, Color.green, 2f);
-            GLDebug.DrawLine(center + fwd * CutPlaneSize / -2f + cut * CutPlaneSize / -2f, center + fwd * CutPlaneSize / -2f + cut * CutPlaneSize / 2f, Color.green, 2f);
-            GLDebug.DrawLine(center + fwd * CutPlaneSize / -2f + cut * CutPlaneSize / 2f, center + fwd * CutPlaneSize / 2f + cut * CutPlaneSize / 2f, Color.green, 2f);
-        }
-#endif
 
+        GLDebug.DrawLine(center, center + normal, Color.red, 2f, false);
+        GLDebug.DrawLine(center + fwd * CutPlaneSize / 2f + cut * CutPlaneSize / 2f, center + fwd * CutPlaneSize / 2f + cut * CutPlaneSize / -2f, Color.green, 2f);
+        GLDebug.DrawLine(center + fwd * CutPlaneSize / 2f + cut * CutPlaneSize / -2f, center + fwd * CutPlaneSize / -2f + cut * CutPlaneSize / -2f, Color.green, 2f);
+        GLDebug.DrawLine(center + fwd * CutPlaneSize / -2f + cut * CutPlaneSize / -2f, center + fwd * CutPlaneSize / -2f + cut * CutPlaneSize / 2f, Color.green, 2f);
+        GLDebug.DrawLine(center + fwd * CutPlaneSize / -2f + cut * CutPlaneSize / 2f, center + fwd * CutPlaneSize / 2f + cut * CutPlaneSize / 2f, Color.green, 2f);
+
+
+
+        goCutPlane = Instantiate(CutPlane);
+
+        goCutPlane.transform.position = center;
+        goCutPlane.transform.up = normal;
+        
+        offset = pointer.transform.position - goCutPlane.transform.position;
+
+        pointerrotation = pointer.transform.rotation;
+        objectrotation = goCutPlane.transform.rotation;
+    }
+
+    private void Cut(Vector3 center, Vector3 normal)
+    {
         GameObject goCutPlane = new GameObject("CutPlane", typeof(BoxCollider), typeof(Rigidbody), typeof(SplitterSingleCut));
 
         goCutPlane.GetComponent<Collider>().isTrigger = true;
@@ -117,7 +144,7 @@ public class CameraLineSplitter : MonoBehaviour
         transformCutPlane.position = center;
         transformCutPlane.localScale = new Vector3(CutPlaneSize, .01f, CutPlaneSize);
         transformCutPlane.up = normal;
-        float angleFwd = Vector3.Angle(transformCutPlane.forward, fwd);
-        transformCutPlane.RotateAround(center, normal, normal.y < 0f ? -angleFwd : angleFwd);
+        //float angleFwd = Vector3.Angle(transformCutPlane.forward, fwd);
+        //transformCutPlane.RotateAround(center, normal, normal.y < 0f ? -angleFwd : angleFwd);
     }
 }
