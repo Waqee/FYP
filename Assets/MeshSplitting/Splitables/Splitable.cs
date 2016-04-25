@@ -217,6 +217,9 @@ public class Splitable : MonoBehaviour, ISplitable
             }
 
             PostProcessObject(newGOs[i]);
+            newGOs[i].transform.localScale = _transform.localScale;
+            newGOs[i].transform.localPosition = _transform.localPosition;
+            newGOs[i].transform.localRotation = _transform.localRotation;
         }
     }
 

@@ -4,6 +4,8 @@ using System.Collections;
 
 public class Toolbox : MonoBehaviour
 {
+
+    public GameObject cube;
     // Use this for initialization
     void Start()
     {
@@ -14,18 +16,20 @@ public class Toolbox : MonoBehaviour
     void Update()
     {
         if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.ONE))
-            PhotonNetwork.Instantiate("SplitableCube", transform.position, Quaternion.identity, 0);
+            Instantiate(cube, transform.position, Quaternion.identity);
         if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.TWO))
             PhotonNetwork.Instantiate("SplitableSphere", transform.position, Quaternion.identity, 0);
         if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.THREE))
         {
-            GameObject imported = OBJLoader.LoadOBJFile("Assets/Models/7h15t5bvooe8-Aventador/Avent.obj");
+            GameObject imported = OBJLoader.LoadOBJFile("Assets/Models/F-14A_Tomcat/F-14A_Tomcat.obj");
 
             imported.transform.position = transform.position;
-
+            imported.transform.localScale = Vector3.one * 0.1f;
             foreach (Transform child in imported.transform)
             {
                 child.gameObject.AddComponent<Splitable>();
+                child.gameObject.GetComponent<Splitable>().Convex = true;
+                child.gameObject.GetComponent<Splitable>().UseCapUV = true;
                 child.gameObject.AddComponent<MeshCollider>();
             }
             

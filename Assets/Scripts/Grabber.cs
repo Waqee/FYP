@@ -11,6 +11,8 @@ public class Grabber : MonoBehaviour {
 	Quaternion pointerrotation;
     Quaternion objectrotation;
     Color color;
+
+    int changecol = 0;
     // Use this for initialization
     void Start () {
 	
@@ -30,7 +32,6 @@ public class Grabber : MonoBehaviour {
                 if (go.name != "Floor" && go.name != "CutPlane" && go.name != "Wall" && Vector3.Distance(transform.position, go.transform.position) < min)
                 {
                     current = go;
-                    Debug.Log("Hit");
                     color = current.GetComponent<Renderer>().material.color;
                 }
 			}
@@ -64,6 +65,13 @@ public class Grabber : MonoBehaviour {
 
                 if (SixenseInput.Controllers[0].GetButton(SixenseButtons.THREE))
                     current.transform.rotation = (leftpointer.transform.rotation * Quaternion.Inverse( pointerrotation)) * objectrotation;
+
+                if (SixenseInput.Controllers[0].GetButton(SixenseButtons.TWO) && current.transform.parent)
+                {
+                    current.GetComponent<Renderer>().material.color = color;
+                    current = current.transform.parent.gameObject;
+                }
+
 
                 if (SixenseInput.Controllers [1].GetButtonUp (SixenseButtons.TRIGGER))
 					grabbed = false;
