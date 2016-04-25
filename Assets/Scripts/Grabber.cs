@@ -10,6 +10,7 @@ public class Grabber : MonoBehaviour {
     public float scalingdist;
 	Quaternion pointerrotation;
     Quaternion objectrotation;
+    Color color;
     // Use this for initialization
     void Start () {
 	
@@ -18,18 +19,22 @@ public class Grabber : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (!grabbed) {
-			if (current != null)
-				current.GetComponent<Renderer> ().material.color = Color.white;
+			if (current != null && current.GetComponent<Renderer>())
+				current.GetComponent<Renderer> ().material.color = color;
 			current = null;
 			Collider[] colliders;
 			colliders = Physics.OverlapSphere (transform.position, 0000000.1f);
 			float min = Mathf.Infinity;
 			foreach (var collider in colliders) {
-				var go = collider.gameObject; 
-				if (go.name != "Floor" && go.name != "CutPlane" && go.name != "Wall" && Vector3.Distance (transform.position, go.transform.position) < min)
-					current = go;
+				var go = collider.gameObject;
+                if (go.name != "Floor" && go.name != "CutPlane" && go.name != "Wall" && Vector3.Distance(transform.position, go.transform.position) < min)
+                {
+                    current = go;
+                    Debug.Log("Hit");
+                    color = current.GetComponent<Renderer>().material.color;
+                }
 			}
-			if (current != null)
+			if (current != null && current.GetComponent<Renderer>())
 				current.GetComponent<Renderer> ().material.color = Color.green;
 		}
 
@@ -49,6 +54,7 @@ public class Grabber : MonoBehaviour {
 
                 if (SixenseInput.Controllers[0].GetButton(SixenseButtons.ONE))
                     current.transform.localScale = Vector3.one * (Vector3.Distance(transform.position, leftpointer.transform.position) - scalingdist + 1);
+
 
                 if (SixenseInput.Controllers[0].GetButtonDown(SixenseButtons.THREE))
                 {

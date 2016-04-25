@@ -58,12 +58,6 @@
     <Reference Include="UnityEngine.Networking">
       <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Networking">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
@@ -93,6 +87,8 @@
     <Compile Include="Assets\MeshSplitting\SplitterMath\SplitterMath.cs" />
     <Compile Include="Assets\MeshSplitting\Splitters\Splitter.cs" />
     <Compile Include="Assets\MeshSplitting\Splitters\SplitterSingleCut.cs" />
+    <Compile Include="Assets\OBJImport\OBJLoader.cs" />
+    <Compile Include="Assets\OBJImport\TextureLoader.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\CustomTypes.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Enums.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Extensions.cs" />
@@ -168,6 +164,7 @@
     <Compile Include="Assets\SixenseInput\Scripts\SixensePlugin.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\OBJImport\readme.txt" />
     <None Include="Assets\Photon Unity Networking\changelog.txt" />
     <None Include="Assets\Photon Unity Networking\readme.txt" />
     <None Include="Assets\Plugins\Photon3Unity3D.xml" />
