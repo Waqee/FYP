@@ -23,13 +23,15 @@ public class NetworkManager : Photon.PunBehaviour
 	}
 
 	public void CreatePublicRoom()
-	{
-		PhotonNetwork.CreateRoom (null);
+    {
+        PhotonNetwork.autoCleanUpPlayerObjects = false;
+        PhotonNetwork.CreateRoom (null);
 	}
 
 	public void JoinRandomPublicRoom()
-	{
-		PhotonNetwork.JoinRandomRoom();
+    {
+        PhotonNetwork.autoCleanUpPlayerObjects = false;
+        PhotonNetwork.JoinRandomRoom();
 	}
 
 	public void CreatePrivateRoom()
@@ -48,7 +50,9 @@ public class NetworkManager : Photon.PunBehaviour
 			Debug.Log ("Created room with name and password!");
 			RoomOptions ro = new RoomOptions ();
 			ro.isVisible = false;
-			PhotonNetwork.CreateRoom (nameInputField.text + passwordInputField.text, ro, null);
+
+            PhotonNetwork.autoCleanUpPlayerObjects = false;
+            PhotonNetwork.CreateRoom (nameInputField.text + passwordInputField.text, ro, null);
 		} 
 		else 
 			Debug.Log ("Enter a room name and password.");		
@@ -68,7 +72,8 @@ public class NetworkManager : Photon.PunBehaviour
 		if (nameInputField.text != "" && passwordInputField.text != "")
 		{
 			Debug.Log ("Joined room with name and password!");
-			PhotonNetwork.JoinRoom (nameInputField.text + passwordInputField.text);
+            PhotonNetwork.autoCleanUpPlayerObjects = false;
+            PhotonNetwork.JoinRoom (nameInputField.text + passwordInputField.text);
 		} 
 		else
 			Debug.Log ("Room name and password incorrect.");
@@ -76,7 +81,7 @@ public class NetworkManager : Photon.PunBehaviour
 
 	public override void OnJoinedRoom()
 	{
-		PhotonNetwork.LoadLevel ("Editor");
+        PhotonNetwork.LoadLevel ("Editor");
 		Debug.Log ("Test called!");
 	}
 }
