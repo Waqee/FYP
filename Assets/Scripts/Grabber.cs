@@ -2,8 +2,8 @@
 using System.Collections;
 
 public class Grabber : MonoBehaviour {
-
-	public static GameObject current;
+    public OnClickRequestOwnership script;
+    public static GameObject current;
     public GameObject leftpointer;
 	public static bool grabbed = false;
 	public Vector3 offset;
@@ -35,13 +35,16 @@ public class Grabber : MonoBehaviour {
                     color = current.GetComponent<Renderer>().material.color;
                 }
 			}
-			if (current != null && current.GetComponent<Renderer>())
-				current.GetComponent<Renderer> ().material.color = Color.green;
+            if (current != null && current.GetComponent<Renderer>())
+                current.GetComponent<Renderer>().material.color = Color.green;
 		}
 
 		if (current && !SixenseInput.Controllers [1].GetButton (SixenseButtons.BUMPER) && SixenseInput.Controllers [1].GetButtonDown (SixenseButtons.TRIGGER)) {
 			grabbed = true;
-			offset = current.transform.position - transform.position;
+            OnClickRequestOwnership other = (OnClickRequestOwnership)current.GetComponent(typeof(OnClickRequestOwnership));
+            if(other != null)
+                other.Take();
+            offset = current.transform.position - transform.position;
 		}
 
 		if (grabbed) {

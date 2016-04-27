@@ -81,7 +81,7 @@ public class NetworkManager : Photon.PunBehaviour
 
 	public override void OnJoinedRoom()
 	{
+        PhotonNetwork.automaticallySyncScene = true;
         PhotonNetwork.LoadLevel ("Editor");
-		Debug.Log ("Test called!");
 	}
 }
