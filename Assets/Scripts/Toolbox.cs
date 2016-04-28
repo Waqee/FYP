@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.IO;
+using System.Collections.Generic;
 
 public class Toolbox : MonoBehaviour
 {
-
-    public GameObject cube;
     // Use this for initialization
     void Start()
     {
@@ -16,23 +16,32 @@ public class Toolbox : MonoBehaviour
     void Update()
     {
         if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.ONE))
-            Instantiate(cube, transform.position, Quaternion.identity);
+            PhotonNetwork.Instantiate("SplitableCube", transform.position, Quaternion.identity, 0);
         if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.TWO))
             PhotonNetwork.Instantiate("SplitableSphere", transform.position, Quaternion.identity, 0);
         if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.THREE))
         {
-            GameObject imported = OBJLoader.LoadOBJFile("Assets/Models/F-14A_Tomcat/F-14A_Tomcat.obj");
+            GameObject imported = ImportObject(transform.position);
 
-            imported.transform.position = transform.position;
-            imported.transform.localScale = Vector3.one * 0.1f;
+            List<int> idsList = new List<int>();
+
             foreach (Transform child in imported.transform)
             {
-                child.gameObject.AddComponent<Splitable>();
-                child.gameObject.GetComponent<Splitable>().Convex = true;
-                child.gameObject.GetComponent<Splitable>().UseCapUV = true;
-                child.gameObject.AddComponent<MeshCollider>();
+                //Generate ID and add to list. 
+                int id = PhotonNetwork.AllocateViewID();
+                idsList.Add(id);
+                // Set up child
+                SetUpChild(child, id);
             }
-            
+
+            PhotonView photonView = this.GetComponent<PhotonView>();
+            photonView.RPC("SpawnOnNetwork", PhotonTargets.OthersBuffered, transform.position, idsList.ToArray());
+
+            //GameObject imported = OBJLoader.LoadOBJFile("Models/F-14A_Tomcat/F-14A_Tomcat.obj");
+
+            //imported.transform.position = transform.position;
+            //imported.transform.localScale = Vector3.one * 0.1f;
+
             //imported.AddComponent<MeshFilter>();
             //MeshFilter[] meshFilters = imported.GetComponentsInChildren<MeshFilter>();
             //CombineInstance[] combine = new CombineInstance[meshFilters.Length];
@@ -48,11 +57,52 @@ public class Toolbox : MonoBehaviour
             //imported.transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
             //imported.AddComponent<MeshCollider>();
         }
-        //if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.ONE))
-         //   Instantiate((Object)Grabber.current, transform.position, Quaternion.identity);
-        if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.FOUR) && (Object)Grabber.current != null)
-            Destroy((Object)Grabber.current);
+        // Object Copy (don't delete this code)
+        //if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.ONE) && (Object)Grabber.current != null)
+        //PhotonNetwork.Instantiate(Grabber.current.name, Grabber.current.transform.position, Grabber.current.transform.rotation, 0);
+        if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.FOUR) && Grabber.current != null)
+            PhotonNetwork.Destroy(Grabber.current.GetComponent<PhotonView>());
         if (SixenseInput.Controllers[0].GetButtonDown(SixenseButtons.START))
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    [PunRPC]
+    void SpawnOnNetwork(Vector3 pos, int[] ids)
+    {
+        GameObject imported = ImportObject(pos);
+
+        int i = 0;
+        foreach (Transform child in imported.transform)
+            SetUpChild(child, ids[i++]);
+    }
+
+    // Imports game object.
+    GameObject ImportObject(Vector3 position)
+    {
+        GameObject imported = OBJLoader.LoadOBJFile("Models/F-14A_Tomcat/F-14A_Tomcat.obj");
+        imported.transform.position = position;
+        imported.transform.localScale = Vector3.one * 0.1f;
+        return imported;
+    }
+
+    // Sets up child component of an imported game object.
+    void SetUpChild(Transform child, int viewID)
+    {
+        // Add the splitable script and set it up.
+        child.gameObject.AddComponent<Splitable>();
+        child.gameObject.GetComponent<Splitable>().Convex = true;
+        child.gameObject.GetComponent<Splitable>().UseCapUV = true;
+        // Add the mesh collider.
+        child.gameObject.AddComponent<MeshCollider>();
+        // Add the ownership transfer script.
+        child.gameObject.AddComponent<OnClickRequestOwnership>();
+        // Add the photon view and set it up.
+        child.gameObject.AddComponent<PhotonView>();
+        child.gameObject.GetComponent<PhotonView>().viewID = viewID;
+        child.gameObject.GetComponent<PhotonView>().ObservedComponents = new List<Component>();
+        child.gameObject.GetComponent<PhotonView>().ownershipTransfer = OwnershipOption.Takeover;
+        child.gameObject.GetComponent<PhotonView>().ObservedComponents.Add(child.gameObject.transform);
+        child.gameObject.GetComponent<PhotonView>().onSerializeTransformOption = OnSerializeTransform.All;
+        child.gameObject.GetComponent<PhotonView>().synchronization = ViewSynchronization.UnreliableOnChange;
     }
 }
