@@ -21,17 +21,20 @@ public class Toolbox : MonoBehaviour
             PhotonNetwork.Instantiate("SplitableSphere", transform.position, Quaternion.identity, 0);
         if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.THREE))
         {
-            GameObject imported = ImportObject(transform.position);
-
             List<int> idsList = new List<int>();
+
+            int objectID = PhotonNetwork.AllocateViewID();
+            idsList.Add(objectID);
+            GameObject imported = ImportObject(transform.position, objectID);
+
 
             foreach (Transform child in imported.transform)
             {
                 //Generate ID and add to list. 
-                int id = PhotonNetwork.AllocateViewID();
-                idsList.Add(id);
+                int partID = PhotonNetwork.AllocateViewID();
+                idsList.Add(partID);
                 // Set up child
-                SetUpChild(child, id);
+                SetUpChild(child, partID);
             }
 
             PhotonView photonView = this.GetComponent<PhotonView>();
@@ -61,7 +64,15 @@ public class Toolbox : MonoBehaviour
         //if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.ONE) && (Object)Grabber.current != null)
         //PhotonNetwork.Instantiate(Grabber.current.name, Grabber.current.transform.position, Grabber.current.transform.rotation, 0);
         if (SixenseInput.Controllers[1].GetButtonDown(SixenseButtons.FOUR) && Grabber.current != null)
-            PhotonNetwork.Destroy(Grabber.current.GetComponent<PhotonView>());
+        {
+            if (Grabber.current.tag == "imported")
+            {
+                PhotonView photonView = this.GetComponent<PhotonView>();
+                photonView.RPC("Delete", PhotonTargets.AllBuffered, Grabber.current.name);
+            }
+            else
+                PhotonNetwork.Destroy(Grabber.current);                
+        }
         if (SixenseInput.Controllers[0].GetButtonDown(SixenseButtons.START))
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -69,19 +80,42 @@ public class Toolbox : MonoBehaviour
     [PunRPC]
     void SpawnOnNetwork(Vector3 pos, int[] ids)
     {
-        GameObject imported = ImportObject(pos);
+        GameObject imported = ImportObject(pos, ids[0]);
 
-        int i = 0;
+        int i = 1;
         foreach (Transform child in imported.transform)
             SetUpChild(child, ids[i++]);
     }
 
+    [PunRPC]
+    void Delete(string name)
+    {
+        GameObject toDelete = GameObject.Find(name);
+        if (toDelete != null)
+            Destroy(toDelete);
+    }
+
     // Imports game object.
-    GameObject ImportObject(Vector3 position)
+    GameObject ImportObject(Vector3 position, int viewID)
     {
         GameObject imported = OBJLoader.LoadOBJFile("Models/F-14A_Tomcat/F-14A_Tomcat.obj");
         imported.transform.position = position;
         imported.transform.localScale = Vector3.one * 0.1f;
+
+        // Name and tag the object
+        imported.name = viewID.ToString();
+        imported.tag = "imported";
+
+        // Add the photon view and set it up.
+        imported.AddComponent<PhotonView>();
+        imported.AddComponent<OnClickRequestOwnership>();
+        imported.GetComponent<PhotonView>().viewID = viewID;
+        imported.GetComponent<PhotonView>().ObservedComponents = new List<Component>();
+        imported.GetComponent<PhotonView>().ownershipTransfer = OwnershipOption.Takeover;
+        imported.GetComponent<PhotonView>().ObservedComponents.Add(imported.transform);
+        imported.GetComponent<PhotonView>().onSerializeTransformOption = OnSerializeTransform.All;
+        imported.GetComponent<PhotonView>().synchronization = ViewSynchronization.UnreliableOnChange;
+
         return imported;
     }
 
@@ -96,8 +130,12 @@ public class Toolbox : MonoBehaviour
         child.gameObject.AddComponent<MeshCollider>();
         // Add the ownership transfer script.
         child.gameObject.AddComponent<OnClickRequestOwnership>();
+        // Name and tag the object
+        child.gameObject.name = viewID.ToString();
+        child.gameObject.tag = "imported";
         // Add the photon view and set it up.
         child.gameObject.AddComponent<PhotonView>();
+        child.gameObject.AddComponent<OnClickRequestOwnership>();
         child.gameObject.GetComponent<PhotonView>().viewID = viewID;
         child.gameObject.GetComponent<PhotonView>().ObservedComponents = new List<Component>();
         child.gameObject.GetComponent<PhotonView>().ownershipTransfer = OwnershipOption.Takeover;
