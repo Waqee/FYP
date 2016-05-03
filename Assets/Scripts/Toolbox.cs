@@ -6,10 +6,17 @@ using System.Collections.Generic;
 
 public class Toolbox : MonoBehaviour
 {
+
+    public GameObject floor;
+
+    public GameObject left;
+
+    public GameObject right;
+
     // Use this for initialization
     void Start()
     {
-       
+
     }
 
     // Update is called once per frame
@@ -75,6 +82,20 @@ public class Toolbox : MonoBehaviour
         }
         if (SixenseInput.Controllers[0].GetButtonDown(SixenseButtons.START))
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        if (SixenseInput.Controllers[0].GetButtonDown(SixenseButtons.FOUR))
+        {
+            floor.SetActive(false);
+            left.SetActive(false);
+            right.SetActive(false);
+
+            OBJExporter exporter = new OBJExporter();
+            exporter.Export("New Models/Model.obj");
+
+            floor.SetActive(true);
+            left.SetActive(true);
+            right.SetActive(true);
+        }
     }
 
     [PunRPC]

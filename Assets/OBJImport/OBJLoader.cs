@@ -17,7 +17,7 @@ using UnityEditor;
 
 public class OBJLoader
 {
-    public static bool splitByMaterial = false;
+    public static bool splitByMaterial = true;
     public static string[] searchPaths = new string[] { "", "%FileName%_Textures" + Path.DirectorySeparatorChar };
     //structures
     struct OBJFace
